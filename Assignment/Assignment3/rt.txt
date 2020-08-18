@@ -1,0 +1,300 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+float NEAR=0.0;
+  float LEFT=0.0;
+  float RIGHT=0.0;
+  float BOTTOM=0.0;
+  float TOP=0.0;
+  int RES_COL=0;
+  int RES_ROW=0;
+  float BACK_RED=0.0;
+  float BACK_GREEN=0.0;
+  float BACK_BLUE=0.0;
+  float AMB_RED=0.0;
+  float AMB_GREEN=0.0;
+  float AMB_BLUE=0.0;
+  char OUTPUT[25];
+
+  struct sphere{
+         int svalid;    
+         char name[25];
+         float sposx; float sposy; float sposz;   
+         float sclx; float scly; float sclz;
+         float sr; float sg; float sb;
+         float ka; float kd; float ks; float kr;
+         int n;
+  }sphere[15];   
+
+  struct light{
+         int lvalid;    
+         char name[25];
+         float lposx; float lposy; float lposz;   
+         float ir; float ig; float ib;
+  }light[10];   
+
+
+void main(int argc, char *argv[])
+{
+  FILE *input_file;
+  input_file = fopen(argv[1], "r");
+ 
+
+  if(input_file == NULL)
+   {
+     printf("Cant open the file %s for reading.\n", argv[1]);
+     exit(1);
+   }
+
+   int i =0; int near_i=-100; int left_i=-100; int right_i=-100; int bottom_i=-100; int top_i=-100; 
+   int rcolrow_i=-100; 
+   int back_i=-100; int amb_i=-100; int out_i=-100;  
+   int sphere_i=-100; int light_i=-100; 
+   char word[25]; char* out;
+   int sphere_count=0; int light_count=0;
+
+   while(fscanf(input_file, "%s",word) != EOF)
+   { 
+     int cpy_i = -1;
+     
+     //STORING ---------> NEAR
+     if(word[0]=='N'&&word[1]=='E'&&word[2]=='A'&&word[3]=='R'){near_i=i+1;}
+     if (i==near_i)  {NEAR   = atof(word);}
+      //STORING ---------> LEFT
+     if(word[0]=='L'&&word[1]=='E'&&word[2]=='F'&&word[3]=='T'){left_i=i+1;}
+     if (i==left_i)  {LEFT   = atof(word);}
+     //STORING ---------> RIGHT
+     if(word[0]=='R'&&word[1]=='I'&&word[2]=='G'&&word[3]=='H' &&word[4]=='T'){right_i=i+1;}
+     if (i==right_i)  {RIGHT  = atof(word);}
+     //STORING ---------> BOTTOM
+     if(word[0]=='B'&&word[1]=='O'&&word[2]=='T'&&word[3]=='T' &&word[4]=='O' &&word[5]=='M'){bottom_i=i+1;}
+     if (i==bottom_i)  {BOTTOM = atof(word);}
+     //STORING ---------> TOP
+     if(word[0]=='T'&&word[1]=='O'&&word[2]=='P'){top_i=i+1;}
+     if (i==top_i)  {TOP    = atof(word);}
+     //STORING ---------> RES COL ROW
+     if(word[0]=='R'&&word[1]=='E'&&word[2]=='S'){rcolrow_i=i+1;}
+     if (i==rcolrow_i) {RES_COL = atoi(word);}
+     if (i==rcolrow_i+1) {RES_ROW  = atoi(word);}
+
+     //STORING ---------> SPHERE
+     if(word[0]=='S'&&word[1]=='P'&&word[2]=='H'&&word[3]=='E'&&word[4]=='R'&&word[5]=='E'){sphere_i=i+1;}
+     if(i==sphere_i){while(sphere[sphere_count].name[cpy_i]=word[++cpy_i]);}
+     if(i==sphere_i+1){sphere[sphere_count].sposx = atof(word);}
+     if(i==sphere_i+2){sphere[sphere_count].sposy = atof(word);}
+     if(i==sphere_i+3){sphere[sphere_count].sposz = atof(word);}
+     if(i==sphere_i+4){sphere[sphere_count].sclx = atof(word);}
+     if(i==sphere_i+5){sphere[sphere_count].scly = atof(word);}
+     if(i==sphere_i+6){sphere[sphere_count].sclz = atof(word);}
+     if(i==sphere_i+7){sphere[sphere_count].sr = atof(word);}
+     if(i==sphere_i+8){sphere[sphere_count].sg = atof(word);}
+     if(i==sphere_i+9){sphere[sphere_count].sb = atof(word);}
+     if(i==sphere_i+10){sphere[sphere_count].ka = atof(word);}
+     if(i==sphere_i+11){sphere[sphere_count].kd = atof(word);}
+     if(i==sphere_i+12){sphere[sphere_count].ks = atof(word);}
+     if(i==sphere_i+13){sphere[sphere_count].kr = atof(word);}
+     if(i==sphere_i+14){sphere[sphere_count].n = atoi(word);sphere_count++;sphere_i=-100;}
+ 
+     //STORING ---------> LIGHT
+     if(word[0]=='L'&&word[1]=='I'&&word[2]=='G'&&word[3]=='H'&&word[4]=='T'){light_i=i+1;}
+     if(i==light_i){while(light[light_count].name[cpy_i]=word[++cpy_i]);}
+     if(i==light_i+1){light[light_count].lposx = atof(word);}
+     if(i==light_i+2){light[light_count].lposy = atof(word);}
+     if(i==light_i+3){light[light_count].lposz = atof(word);}
+     if(i==light_i+4){light[light_count].ir = atof(word);}
+     if(i==light_i+5){light[light_count].ig = atof(word);}
+     if(i==light_i+6){light[light_count].ib = atof(word);light_count++;}
+ 
+     //STORING ---------> BACKGROUND
+     if(word[0]=='B'&&word[1]=='A'&&word[2]=='C'&&word[3]=='K'){back_i=i+1;}
+     if(i==back_i){BACK_RED     = atof(word);}
+     if(i==back_i+1){BACK_GREEN = atof(word);}
+     if(i==back_i+2){BACK_BLUE  = atof(word);}
+
+     //STORING ---------> AMBIENT
+     if(word[0]=='A'&&word[1]=='M'&&word[2]=='B'&&word[3]=='I' &&word[4]=='E' &&word[5]=='N' &&word[6]=='T'){amb_i=i+1;}
+     if(i==amb_i){AMB_RED    = atof(word);}
+     if(i==amb_i+1){AMB_GREEN  = atof(word);}
+     if(i==amb_i+2){AMB_BLUE   = atof(word);}
+     
+     //STORING ---------> OUTPUT
+     if(word[0]=='O'&&word[1]=='U'&&word[2]=='T'&&word[3]=='P' &&word[4]=='U' &&word[5]=='T'){out_i=i+1;}
+     if(i==out_i){while(OUTPUT[cpy_i]=word[++cpy_i]);}
+     i++;
+   }
+
+
+   fclose(input_file);
+ printf("OUTPUT %s\n",OUTPUT);
+   printf("NEAR %.2f\n",NEAR);
+   printf("LEFT %.2f\n",LEFT);
+   printf("RIGHT %.2f\n",RIGHT);
+   printf("BOTTOM %.2f\n",BOTTOM);
+   printf("TOP %.2f\n",TOP);
+   printf("RES_COL %d\n",RES_COL);
+   printf("RES_ROW %d\n",RES_ROW);
+   
+   int j=0; j = sphere_count; sphere_count=0;
+   for (;sphere_count<j;sphere_count++){
+     printf("Name %s\t",sphere[sphere_count].name); 
+     printf("sposx %.2f\t",sphere[sphere_count].sposx); 
+     printf("sposy %.2f\t",sphere[sphere_count].sposy);
+     printf("sposz %.2f\t",sphere[sphere_count].sposz); 
+     printf("sclx %.2f\t",sphere[sphere_count].sclx); 
+     printf("scly %.2f\t",sphere[sphere_count].scly); 
+     printf("sclz %.2f\t",sphere[sphere_count].sclz);
+     printf("sr %.2f\t",sphere[sphere_count].sr);
+     printf("sg %.2f\t",sphere[sphere_count].sg);
+     printf("sb %.2f\t",sphere[sphere_count].sb);
+     printf("ka %.2f\t",sphere[sphere_count].ka);
+     printf("kd %.2f\t",sphere[sphere_count].kd);
+     printf("ks %.2f\t",sphere[sphere_count].ks);
+     printf("kr %.2f\t",sphere[sphere_count].kr);
+     printf("n %d\t\n",sphere[sphere_count].n); 
+   } 
+
+   int jj=0; jj = light_count; light_count=0;
+   for (;light_count<jj;light_count++){
+   printf("Name %s\t",light[light_count].name); 
+   printf("lposx %.2f\t",light[light_count].lposx);  
+   printf("lposy %.2f\t",light[light_count].lposy);   
+   printf("lposz %.2f\t",light[light_count].lposz);
+   printf("ir %.2f\t",light[light_count].ir);
+   printf("ig %.2f\t",light[light_count].ig);
+   printf("ib %.2f\t\n",light[light_count].ib);  
+  }
+
+  printf("BACK_RED %.2f\t\t",BACK_RED);
+  printf("BACK_GREEN %.2f\t\t",BACK_GREEN); 
+  printf("BACK_BLUE %.2f\n",BACK_BLUE); 
+  printf("AMB_RED %.2f\t\t",AMB_RED); 
+  printf("AMB_GREEN %.2f\t\t",AMB_GREEN); 
+  printf("AMB_BLUE %.2f\n",AMB_BLUE); 
+  printf("OUTPUT %s\n",OUTPUT);
+   
+}
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+float NEAR=0.0;
+  float LEFT=0.0;
+  float RIGHT=0.0;
+  float BOTTOM=0.0;
+  float TOP=0.0;
+  int RES_COL=0;
+  int RES_ROW=0;
+  float BACK_RED=0.0;
+  float BACK_GREEN=0.0;
+  float BACK_BLUE=0.0;
+  float AMB_RED=0.0;
+  float AMB_GREEN=0.0;
+  float AMB_BLUE=0.0;
+  char *OUTPUT;
+
+  struct sphere{
+         int svalid;    
+         char *name;
+         float sposx; float sposy; float sposz;   
+         float sclx; float scly; float sclz;
+         float sr; float sg; float sb;
+         float ka; float kd; float ks; float kr;
+         int n;
+  }sphere[15];   
+
+  struct light{
+         int lvalid;    
+         char *name;
+         float lposx; float lposy; float lposz;   
+         float ir; float ig; float ib;
+  }light[10];   
+
+
+void main(int argc, char *argv[])
+{
+  FILE *input_file;
+  input_file = fopen(argv[1], "r");
+ 
+
+  if(input_file == NULL)
+   {
+     printf("Cant open the file %s for reading.\n", argv[1]);
+     exit(1);
+   }
+
+   int i =0;  int back_i=-100;  int sphere_i=-100; int light_i=-100; 
+   char word[25];
+   int sphere_count=0; int light_count=0;
+
+   while(fscanf(input_file, "%s",word) != EOF)
+   { 
+     if (i==1)  {NEAR   = atof(word); printf("NEAR %.2f\n",NEAR);}
+     if (i==3)  {LEFT   = atof(word); printf("LEFT %.2f\n",LEFT);}
+     if (i==5)  {RIGHT  = atof(word); printf("RIGHT %.2f\n",RIGHT);}
+     if (i==7)  {BOTTOM = atof(word); printf("BOTTOM %.2f\n",BOTTOM);}
+     if (i==9)  {TOP    = atof(word); printf("TOP %.2f\n",TOP);}
+     if (i==11) {RES_COL = atoi(word); printf("RES_COL %d\n",RES_COL);}
+     if (i==11) {RES_ROW  = atoi(word); printf("RES_ROW %d\n",RES_ROW);}
+
+     //SPHERE
+     if(word[0]=='S'&&word[1]=='P'&&word[2]=='H'&&word[3]=='E'&&word[4]=='R'&&word[5]=='E'){sphere_i=i+1;}
+     if(i==sphere_i){sphere[sphere_count].name = word; printf("Name %s\t",sphere[sphere_count].name);}
+     if(i==sphere_i+1){sphere[sphere_count].sposx = atof(word); printf("sposx %.2f\t",sphere[sphere_count].sposx);}
+     if(i==sphere_i+2){sphere[sphere_count].sposy = atof(word); printf("sposy %.2f\t",sphere[sphere_count].sposy);}
+     if(i==sphere_i+3){sphere[sphere_count].sposz = atof(word); printf("sposz %.2f\t",sphere[sphere_count].sposz);}
+     if(i==sphere_i+4){sphere[sphere_count].sclx = atof(word); printf("sclx %.2f\t",sphere[sphere_count].sclx);}
+     if(i==sphere_i+5){sphere[sphere_count].scly = atof(word); printf("scly %.2f\t",sphere[sphere_count].scly);}
+     if(i==sphere_i+6){sphere[sphere_count].sclz = atof(word); printf("sclz %.2f\t",sphere[sphere_count].sclz);}
+     if(i==sphere_i+7){sphere[sphere_count].sr = atof(word); printf("sr %.2f\t",sphere[sphere_count].sr);}
+     if(i==sphere_i+8){sphere[sphere_count].sg = atof(word); printf("sg %.2f\t",sphere[sphere_count].sg);}
+     if(i==sphere_i+9){sphere[sphere_count].sb = atof(word); printf("sb %.2f\t",sphere[sphere_count].sb);}
+     if(i==sphere_i+10){sphere[sphere_count].ka = atof(word); printf("ka %.2f\t",sphere[sphere_count].ka);}
+     if(i==sphere_i+11){sphere[sphere_count].kd = atof(word); printf("kd %.2f\t",sphere[sphere_count].kd);}
+     if(i==sphere_i+12){sphere[sphere_count].ks = atof(word); printf("ks %.2f\t",sphere[sphere_count].ks);}
+     if(i==sphere_i+13){sphere[sphere_count].kr = atof(word); printf("kr %.2f\t",sphere[sphere_count].kr);}
+     if(i==sphere_i+14){sphere[sphere_count].n = atoi(word); printf("n %d\t\n",sphere[sphere_count].n); sphere_count++;}
+
+     //LIGHT
+     if(word[0]=='L'&&word[1]=='I'&&word[2]=='G'&&word[3]=='H'&&word[4]=='T'){light_i=i+1;}
+     if(i==light_i){light[light_count].name = word; printf("Name %s\t",light[light_count].name);}
+     if(i==light_i+1){light[light_count].lposx = atof(word); printf("lposx %.2f\t",light[light_count].lposx);}
+     if(i==light_i+2){light[light_count].lposy = atof(word); printf("lposy %.2f\t",light[light_count].lposy);}
+     if(i==light_i+3){light[light_count].lposz = atof(word); printf("lposz %.2f\t",light[light_count].lposz);}
+     if(i==light_i+4){light[light_count].ir = atof(word); printf("ir %.2f\t",light[light_count].ir);}
+     if(i==light_i+5){light[light_count].ig = atof(word); printf("ig %.2f\t",light[light_count].ig);}
+     if(i==light_i+6){light[light_count].ib = atof(word); printf("ib %.2f\t\n",light[light_count].ib);  light_count++;}
+
+     //BACKGROUND
+     if(word[0]=='B'&&word[1]=='A'&&word[2]=='C'&&word[3]=='K'){back_i=i+1;}
+   
+     if(i==back_i){BACK_RED     = atof(word); printf("BACK_RED %.2f\t\t",BACK_RED);}
+     if(i==back_i+1){BACK_GREEN = atof(word); printf("BACK_GREEN %.2f\t\t",BACK_GREEN);}
+     if(i==back_i+2){BACK_BLUE  = atof(word); printf("BACK_BLUE %.2f\n",BACK_BLUE);}
+     if(i==back_i+4){AMB_RED    = atof(word); printf("AMB_RED %.2f\t\t",AMB_RED);}
+     if(i==back_i+5){AMB_GREEN  = atof(word); printf("AMB_GREEN %.2f\t\t",AMB_GREEN);}
+     if(i==back_i+6){AMB_BLUE   = atof(word); printf("AMB_BLUE %.2f\n",AMB_BLUE);}
+     if(i==back_i+8){OUTPUT     = word; printf("OUTPUT %s\n",OUTPUT);}
+     i++;
+   }
+   fclose(input_file);
+}
+
